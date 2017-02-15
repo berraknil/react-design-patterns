@@ -1,18 +1,24 @@
 import React from 'react';
-import withData from './withData';
+import {connect } from 'react-refetch';
+import Gist from './gist';
 
-const List = ({ data: gists }) => (
- <ul>
-   {gists.map(gist => (
-    <li key={gist.id}>{gist.description}</li>
-   ))}
- </ul>
+const List = ({ gists }) => (
+  gists.fullfilled && (
+    <ul>
+      {gists.value.map(gist => (
+        <Gist key={gist.id} {...gist} />
+      ))}
+    </ul>
+  )
 )
 
 List.propTypes = {
-  data: React.PropTypes.array,
+  gists: React.PropTypes.object,
 };
 
-const withGists = withData(props => `https://api.github.com/users/${props.username}/gists`);
+const connectWithGists = connect(({ username }) =>
+  ({ 
+    gists: `https://api.github.com/users/${username}/gists`,
+  }));
 
-export default withGists(List);
+export default connectWithGists(List);
